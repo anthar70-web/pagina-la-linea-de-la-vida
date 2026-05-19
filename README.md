@@ -1,2 +1,2 @@
 # pagina-la-linea-de-la-vida
-pagina creada para clientes para anlisis financiero
+pagina creada para clientes para analisis financiero
