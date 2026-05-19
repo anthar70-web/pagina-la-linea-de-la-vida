@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>La Línea de la Vida</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f0f0;font-size:14px}
+:root{--g:#2a7a2a;--gd:#1a5e1a;--gl:#EAF3DE;--bd:#e0e0e0;--txt:#1a1a1a;--muted:#666;--card:#fff;--bg:#f5f5f5}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;background:#1a5e1a}
+.topbar-logo{color:#fff;font-size:13px;font-weight:600;opacity:0.9}
+.topbar-btns{display:flex;gap:6px}
+.tbtn{padding:5px 11px;font-size:11px;border:1px solid rgba(255,255,255,0.35);border-radius:6px;background:rgba(255,255,255,0.12);color:#fff;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit;transition:all 0.2s;white-space:nowrap}
+.tbtn:hover{background:rgba(255,255,255,0.22)}
+
+/* HEADER */
+.hdr{background:linear-gradient(180deg,#2e8b2e,#236b23);color:#fff;text-align:center;padding:13px 16px 10px}
+.hdr h1{font-size:clamp(18px,5vw,26px);font-weight:700;letter-spacing:0.03em;text-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.hdr p{font-size:clamp(10px,2.5vw,13px);opacity:0.8;margin-top:2px;letter-spacing:0.06em;text-transform:uppercase}
+
+/* CLIENT BAR */
+.cbar{background:#fff;border-bottom:1px solid var(--bd);padding:10px 14px}
+.cbar-title{font-size:10px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
+.cgrid{display:grid;grid-template-columns:2fr 1fr 2fr;gap:8px}
+.cf{display:flex;flex-direction:column;gap:3px}
+.cf label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em}
+.ci{border:1px solid var(--bd);border-radius:6px;padding:6px 9px;font-size:13px;color:var(--txt);background:#fafafa;width:100%;font-family:inherit}
+.ci:focus{outline:none;border-color:var(--g)}
+
+/* TIMELINE */
+.tls{background:linear-gradient(135deg,#2e8b2e 0%,#1a5e1a 100%);padding:13px 14px 16px;color:#fff}
+.tl-boxes{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:13px}
+.tlb{background:rgba(255,255,255,0.12);border-radius:8px;padding:7px 6px;text-align:center}
+.tlb.gold{background:rgba(255,224,102,0.18);border:1px solid rgba(255,224,102,0.4)}
+.tlb label{display:block;font-size:9px;color:rgba(255,255,255,0.78);margin-bottom:4px;line-height:1.3}
+.tl-ainp{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.35);border-radius:5px;padding:3px 4px;font-size:15px;font-weight:700;color:#fff;width:58px;text-align:center;font-family:inherit;display:block;margin:0 auto}
+.tl-ainp:focus{outline:none;border-color:#ffe066;background:rgba(255,255,255,0.3)}
+.tl-calc{font-size:18px;font-weight:700;color:#ffe066}
+.tl-calc-sub{font-size:9px;color:rgba(255,255,255,0.65);margin-top:2px}
+
+/* TIMELINE VISUAL */
+.tlv{position:relative;height:52px;margin:0 6px}
+.tlv-track{position:absolute;top:14px;left:0;right:0;height:4px;background:rgba(255,255,255,0.18);border-radius:2px}
+.tlv-worked{position:absolute;top:14px;height:4px;background:rgba(255,255,255,0.65);border-radius:2px;transition:all 0.35s}
+.tlv-future{position:absolute;top:14px;height:4px;background:rgba(255,224,102,0.55);border-radius:2px;transition:all 0.35s}
+.tlv-dot{position:absolute;top:9px;width:14px;height:14px;border-radius:50%;background:#fff;transform:translateX(-50%);transition:left 0.35s;z-index:1}
+.tlv-icon{position:absolute;top:1px;font-size:20px;transform:translateX(-50%);transition:left 0.35s;z-index:2}
+.tlv-lbl{position:absolute;top:32px;font-size:9px;color:rgba(255,255,255,0.82);transform:translateX(-50%);white-space:nowrap;transition:left 0.35s;font-weight:500}
+.tlv-lbl.gold{color:#ffe066;font-weight:700}
+
+/* TABS */
+.tabs{display:flex;background:#efefef;border-bottom:2px solid var(--g);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{flex:1;min-width:58px;padding:9px 3px;font-size:10.5px;text-align:center;cursor:pointer;border:none;background:transparent;color:#666;font-weight:500;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;font-family:inherit;transition:all 0.15s}
+.tab.active{color:var(--g);border-bottom:2px solid var(--g);background:#fff;font-weight:700}
+
+/* STEPS */
+.steps{display:flex;justify-content:center;gap:5px;padding:7px 0;background:#fff;border-bottom:1px solid var(--bd)}
+.sdot{width:7px;height:7px;border-radius:50%;background:#ddd;transition:all 0.2s}
+.sdot.active{background:var(--g)}
+.sdot.done{background:#9FE1CB}
+
+/* PANEL */
+.panel{display:none;padding:10px 12px 16px;background:var(--bg)}
+.panel.active{display:block}
+
+/* CARD */
+.card{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:13px 15px;margin:8px 0;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.ch{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.ci2{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:19px}
+.ctitle{font-size:14px;font-weight:600;color:var(--txt)}
+.csub{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* FORM */
+.ql{display:block;font-size:12px;color:var(--muted);margin:9px 0 3px}
+.ql.first{margin-top:0}
+textarea,.fi{width:100%;border:1px solid var(--bd);border-radius:6px;padding:7px 9px;font-size:13px;font-family:inherit;color:var(--txt);background:#fafafa;resize:vertical}
+textarea:focus,.fi:focus{outline:none;border-color:var(--g);background:#fff}
+
+/* INCOME FORMULA */
+.income-box{background:#f8fdf8;border:1px solid #c8e6c9;border-radius:9px;padding:11px 13px;margin-bottom:12px}
+.ib-title{font-size:10px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:9px;display:flex;align-items:center;gap:5px}
+.irow{display:flex;align-items:flex-end;gap:5px;flex-wrap:wrap}
+.fcol{display:flex;flex-direction:column;align-items:center;gap:2px}
+.fcol-lbl{font-size:10px;color:var(--muted)}
+.finp{border:1px solid var(--bd);border-radius:6px;padding:5px 7px;font-size:13px;font-weight:600;color:var(--txt);background:#fff;text-align:center;height:33px;width:100%;margin:0;font-family:inherit}
+.finp:focus{outline:none;border-color:var(--g)}
+.fop{font-size:14px;font-weight:600;color:#999;padding-bottom:5px;flex-shrink:0}
+.fres{background:var(--g);border-radius:6px;padding:4px 10px;font-size:13px;font-weight:700;color:#fff;height:33px;display:flex;align-items:center;min-width:95px;justify-content:center}
+
+/* FORMULA BOX */
+.fbox{background:#fafafa;border:1px solid var(--bd);border-radius:9px;padding:10px 12px;margin-top:10px}
+.fb-title{font-size:11px;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:4px}
+.fb-hint{font-size:10px;color:var(--muted);margin-top:6px;font-style:italic}
+
+/* ESTADO */
+.erow{display:flex;gap:6px;margin-top:10px}
+.ebtn{flex:1;padding:7px 4px;font-size:12px;border:1px solid var(--bd);border-radius:7px;cursor:pointer;background:#fff;color:#666;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:3px;font-family:inherit;font-weight:500}
+.ebtn.bien{background:#EAF3DE;border-color:#639922;color:#27500A}
+.ebtn.medio{background:#FAEEDA;border-color:#BA7517;color:#633806}
+.ebtn.mal{background:#FCEBEB;border-color:#A32D2D;color:#791F1F}
+
+/* NAV */
+.navbtns{display:flex;gap:8px;margin-top:13px}
+.nbtn{flex:1;padding:9px;font-size:13px;border:1px solid var(--bd);border-radius:8px;background:#fff;color:var(--txt);cursor:pointer;font-family:inherit;font-weight:500;transition:all 0.15s}
+.nbtn:hover{background:#f0f0f0}
+.nbtn.primary{background:var(--g);color:#fff;border-color:var(--g)}
+.nbtn.primary:hover{background:var(--gd)}
+
+/* SOLUTION TABLE */
+.stbl{width:100%;border-collapse:collapse;font-size:11.5px}
+.stbl th{background:var(--g);color:#fff;padding:8px 5px;text-align:left;font-size:10.5px}
+.stbl td{border-bottom:1px solid var(--bd);padding:4px 3px;vertical-align:top}
+.stbl textarea{min-height:48px;font-size:11px;padding:4px;margin:0}
+.stbl input.est{font-size:11px;padding:4px 6px;background:#f0fdf0;border-color:#c8e6c9;font-weight:700;color:var(--gd);margin:0;border-radius:5px}
+.dsel{width:100%;padding:5px 2px;font-size:11px;border:1px solid var(--bd);border-radius:5px;background:#fafafa;font-family:inherit}
+
+/* RESUMEN ESTADOS */
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}
+.rcard{border-radius:8px;padding:9px;text-align:center}
+.rcard.bien{background:#EAF3DE}.rcard.medio{background:#FAEEDA}.rcard.mal{background:#FCEBEB}
+.rnum{font-size:20px;font-weight:700}.rlbl{font-size:10px;margin-top:2px}
+
+/* AI */
+.ai-card{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:14px 15px;margin:10px 0}
+.ai-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:gap}
+.ai-title{font-size:14px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:6px}
+.ai-body{font-size:12.5px;line-height:1.75;color:var(--txt);white-space:pre-wrap}
+.spinner{width:14px;height:14px;border:2px solid #ddd;border-top-color:var(--g);border-radius:50%;animation:sp 0.7s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ai-placeholder{color:var(--muted);font-size:13px;text-align:center;padding:20px;border:2px dashed var(--bd);border-radius:8px}
+
+/* PRINT */
+@media print{
+  .topbar,.tabs,.steps,.navbtns,.tbtn,#gen-btn,#print-report-btn{display:none!important}
+  .panel{display:block!important;padding:8px 0}
+  .card,.ai-card{break-inside:avoid;border:1px solid #ccc;box-shadow:none}
+  body{background:#fff}
+  h1{font-size:22px!important}
+}
+
+/* RESPONSIVE */
+.app{max-width:800px;margin:0 auto}
+@media(max-width:480px){
+  .tl-boxes{grid-template-columns:repeat(3,1fr)}
+  .tl-boxes>.tlb:nth-child(4){grid-column:span 1}
+  .tl-boxes>.tlb:nth-child(5){grid-column:span 2}
+  .cgrid{grid-template-columns:1fr 1fr}
+  .cgrid>.cf:last-child{grid-column:span 2}
+  .irow{gap:4px}
+  .stbl{font-size:10px}
+}
+
+:fullscreen .app,:fullscreen body{max-width:100%;height:100vh;overflow-y:auto}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <span class="topbar-logo">📊 Línea de la Vida Financiera</span>
+  <div class="topbar-btns">
+    <button class="tbtn" onclick="toggleFS()">⛶ Pantalla completa</button>
+    <button class="tbtn" id="print-report-btn" onclick="printReport()">🖨️ Imprimir / PDF</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <h1>La Línea de la Vida</h1>
+  <p>Etapa más productiva · Diagnóstico financiero</p>
+</div>
+
+<!-- CLIENT DATA -->
+<div class="cbar">
+  <div class="cbar-title">👤 Datos del cliente</div>
+  <div class="cgrid">
+    <div class="cf"><label>Nombre completo</label><input class="ci" type="text" id="c-nombre" placeholder="Nombre completo"></div>
+    <div class="cf"><label>Teléfono</label><input class="ci" type="tel" id="c-tel" placeholder="Número"></div>
+    <div class="cf"><label>Correo electrónico</label><input class="ci" type="email" id="c-email" placeholder="correo@ejemplo.com"></div>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="tls">
+  <div class="tl-boxes">
+    <div class="tlb">
+      <label>Inició a trabajar</label>
+      <input class="tl-ainp" type="number" id="t-ini" min="10" max="40" value="22" oninput="updateTL()">
+    </div>
+    <div class="tlb">
+      <label>Edad actual</label>
+      <input class="tl-ainp" type="number" id="t-act" min="18" max="80" value="35" oninput="updateTL()">
+    </div>
+    <div class="tlb">
+      <label>Retiro deseado</label>
+      <input class="tl-ainp" type="number" id="t-ret" min="40" max="80" value="65" oninput="updateTL()">
+    </div>
+    <div class="tlb gold">
+      <label>Años trabajados</label>
+      <div class="tl-calc" id="t-trabajados">13</div>
+      <div class="tl-calc-sub">años</div>
+    </div>
+    <div class="tlb gold">
+      <label>Años p/ retiro</label>
+      <div class="tl-calc" id="t-paretiro">30</div>
+      <div class="tl-calc-sub">años</div>
+    </div>
+  </div>
+  <div class="tlv" id="tlv">
+    <div class="tlv-track"></div>
+    <div class="tlv-worked" id="tlv-w"></div>
+    <div class="tlv-future" id="tlv-f"></div>
+    <!-- static start/end -->
+    <div class="tlv-dot" style="left:0%"></div>
+    <div class="tlv-dot" style="left:100%"></div>
+    <span class="tlv-lbl" style="left:0%" id="tl-lblini">Inicio</span>
+    <span class="tlv-lbl" style="left:100%">Longevidad</span>
+    <!-- dynamic markers -->
+    <div class="tlv-icon" id="tl-hoy-icon" style="left:35%">🚶</div>
+    <span class="tlv-lbl gold" id="tl-hoy-lbl" style="left:35%">Hoy (35)</span>
+    <div class="tlv-icon" id="tl-ret-icon" style="left:80%">🏁</div>
+    <span class="tlv-lbl gold" id="tl-ret-lbl" style="left:80%">Retiro (65)</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs" id="tabs">
+  <button class="tab active" onclick="goTo(0)">💰 Ahorro</button>
+  <button class="tab" onclick="goTo(1)">⚫ Fallecer</button>
+  <button class="tab" onclick="goTo(2)">♿ Invalidez</button>
+  <button class="tab" onclick="goTo(3)">❤️ Salud</button>
+  <button class="tab" onclick="goTo(4)">🎯 Metas</button>
+  <button class="tab" onclick="goTo(5)">👴 Vejez</button>
+  <button class="tab" onclick="goTo(6)">📋 Solución</button>
+</div>
+<div class="steps" id="steps"></div>
+
+<!-- ======== PANEL 0: AHORRO ======== -->
+<div class="panel active" id="p0">
+  <div class="card">
+    <div class="ch">
+      <div class="ci2" style="background:#EAF3DE">💰</div>
+      <div><div class="ctitle">Ahorro e inversiones</div><div class="csub" id="p0-sub">Llevas 13 años trabajando</div></div>
+    </div>
+
+    <!-- INCOME FORMULA -->
+    <div class="income-box">
+      <div class="ib-title">📊 Promedio de ingresos (Inicial + Actual ÷ 2)</div>
+      <div class="irow">
+        <div class="fcol"><span class="fcol-lbl">Ingreso inicial $</span><input type="text" class="finp" id="ing-ini" style="width:110px" placeholder="ej. 8,000" oninput="calcPromedio()"></div>
+        <span class="fop">+</span>
+        <div class="fcol"><span class="fcol-lbl">Ingreso actual $</span><input type="text" class="finp" id="ing-act" style="width:110px" placeholder="ej. 35,000" oninput="calcPromedio()"></div>
+        <span class="fop">÷ 2 =</span>
+        <div class="fcol"><span class="fcol-lbl">Promedio total</span><div class="fres" id="ing-prom">—</div></div>
+      </div>
+    </div>
+
+    <label class="ql first">¿Cuánto dinero ha pasado por tus manos en este tiempo?</label>
+    <textarea id="q0a" rows="2" placeholder="Describe los ingresos que has tenido a lo largo de tu vida laboral..."></textarea>
+    <label class="ql">¿Tienes ahorros o inversiones actualmente?</label>
+    <textarea id="q0b" rows="2" placeholder="Cuentas de ahorro, inversiones, CETES, fondos, inmuebles..."></textarea>
+
+    <div class="fbox">
+      <div class="fb-title">📐 Calcula el dinero que ha pasado por tus manos</div>
+      <div class="irow">
+        <div class="fcol"><span class="fcol-lbl">Ingreso/mes $</span><input type="text" class="finp" id="f0a" style="width:110px" placeholder="Promedio" oninput="calcF(0)"></div>
+        <span class="fop">×</span>
+        <div class="fcol"><span class="fcol-lbl">Meses/año</span><input type="text" class="finp" id="f0b" style="width:65px" value="12" oninput="calcF(0)"></div>
+        <span class="fop">×</span>
+        <div class="fcol"><span class="fcol-lbl">Años</span><input type="text" class="finp" id="f0c" style="width:65px" placeholder="auto" oninput="calcF(0)"></div>
+        <span class="fop">=</span>
+        <div class="fcol"><span class="fcol-lbl">Total acumulado</span><div class="fres" id="f0r">—</div></div>
+      </div>
+      <div class="fb-hint" id="f0-hint">Los años se llenan automáticamente desde la línea de vida. Todos los campos son editables.</div>
+    </div>
+  </div>
+  <label class="ql" style="padding:0 4px">¿Cómo dirías que estás en este momento?</label>
+  <div class="erow">
+    <button class="ebtn" onclick="setE(0,'bien',this)">😊 Bien</button>
+    <button class="ebtn" onclick="setE(0,'medio',this)">😐 Más o menos</button>
+    <button class="ebtn" onclick="setE(0,'mal',this)">😞 Mal</button>
+  </div>
+  <div class="navbtns"><div></div><button class="nbtn primary" onclick="goTo(1)">Siguiente →</button></div>
+</div>
+
+<!-- ======== PANEL 1: FALLECER ======== -->
+<div class="panel" id="p1">
+  <div class="card">
+    <div class="ch">
+      <div class="ci2" style="background:#e8e8e8">⚫</div>
+      <div><div class="ctitle">Riesgo: Fallecimiento</div><div class="csub">Protección familiar en caso de muerte</div></div>
+    </div>
+    <label class="ql first">Si tú faltas, ¿a quién le afectaría dejar de recibir tu ingreso?</label>
+    <textarea id="q1a" rows="2" placeholder="¿Quiénes dependen económicamente de ti?"></textarea>
+    <label class="ql">¿Cuánto necesitaría tu familia al mes para salir adelante?</label>
+    <textarea id="q1b" rows="2" placeholder="Estima el monto mensual necesario para tu familia..."></textarea>
+    <div class="fbox">
+      <div class="fb-title">📐 Suma asegurada recomendada ($ × 12 meses × 7 años)</div>
+      <div class="irow">
+        <div class="fcol"><span class="fcol-lbl">Ingreso/mes $</span><input type="text" class="finp" id="f1a" style="width:110px" placeholder="ej. 20,000" oninput="calcF(1)"></div>
+        <span class="fop">×</span>
+        <div class="fcol"><span class="fcol-lbl">Meses</span><input type="text" class="finp" id="f1b" style="width:60px" value="12" oninput="calcF(1)"></div>
+        <span class="fop">×</span>
+        <div class="fcol"><span class="fcol-lbl">Años</span><input type="text" class="finp" id="f1c" style="width:60px" value="7" oninput="calcF(1)"></div>
+        <span class="fop">=</span>
+        <div class="fcol"><span class="fcol-lbl">Suma asegurada</span><div class="fres" id="f1r">—</div></div>
+      </div>
+      <div class="fb-hint">Ajusta los años según el número de dependientes y su edad. La plantilla sugiere 7 años.</div>
+    </div>
+  </div>
+  <label class="ql" style="padding:0 4px">¿Cómo dirías que estás en este momento?</label>
+  <div class="erow">
+    <button class="ebtn" onclick="setE(1,'bien',this)">😊 Bien</button>
+    <button class="ebtn" onclick="setE(1,'medio',this)">😐 Más o menos</button>
+    <button class="ebtn" onclick="setE(1,'mal',this)">😞 Mal</button>
+  </div>
+  <div class="navbtns"><button class="nbtn" onclick="goTo(0)">← Atrás</button><button class="nbtn primary" onclick="goTo(2)">Siguiente →</button></div>
+</div>
+
+<!-- ======== PANEL 2: INVALIDEZ ======== -->
+<div class="panel" id="p2">
+  <div class="card">
+    <div class="ch">
+      <div class="ci2" style="background:#E6F1FB">♿</div>
+      <div><div class="ctitle">Riesgo: Invalidez</div><div class="csub">Incapacidad total para trabajar</div></div>
+    </div>
+    <label class="ql first">¿Qué pasaría si ya no pudieras trabajar?</label>
+    <textarea id="q2a" rows="2" placeholder="Describe tu situación si perdieras la capacidad de generar ingresos..."></textarea>
+    <label class="ql">¿Quién te va a cuidar? ¿Quién te va a mantener?</label>
+    <textarea id="q2b" rows="2" placeholder="¿Tienes una red de apoyo familiar o económica?"></textarea>
+    <label class="ql">¿Quién proveerá a tu familia?</label>
+    <textarea id="q2c" rows="2" placeholder="Plan en caso de invalidez total o permanente..."></textarea>
+    <div class="fbox">
+      <div class="fb-title">📐 Cobertura de renta mensual en caso de invalidez</div>
+      <div class="irow">
+        <div class="fcol"><span class="fcol-lbl">Renta/mes $</span><input type="text" class="finp" id="f2a" style="width:110px" placeholder="ej. 15,000" oninput="calcF(2)"></div>
+        <span class="fop">×</span>
+        <div class="fcol"><span class="fcol-lbl">Meses</span><input type="text" class="finp" id="f2b" style="width:60px" value="12" oninput="calcF(2)"></div>
+        <span class="fop">×</span>
+        <div class="fcol"><span class="fcol-lbl">Años</span><input type="text" class="finp" id="f2c" style="width:60px" value="7" oninput="calcF(2)"></div>
+        <span class="fop">=</span>
+        <div class="fcol"><span class="fcol-lbl">Cobertura total</span><div class="fres" id="f2r">—</div></div>
+      </div>
+      <div class="fb-hint">Edita la renta mensual deseada y los años de cobertura necesarios.</div>
+    </div>
+  </div>
+  <label class="ql" style="padding:0 4px">¿Cómo dirías que estás en este momento?</label>
+  <div class="erow">
+    <button class="ebtn" onclick="setE(2,'bien',this)">😊 Bien</button>
+    <button class="ebtn" onclick="setE(2,'medio',this)">😐 Más o menos</button>
+    <button class="ebtn" onclick="setE(2,'mal',this)">😞 Mal</button>
+  </div>
+  <div class="navbtns"><button class="nbtn" onclick="goTo(1)">← Atrás</button><button class="nbtn primary" onclick="goTo(3)">Siguiente →</button></div>
+</div>
+
+<!-- ======== PANEL 3: SALUD ======== -->
+<div class="panel" id="p3">
+  <div class="card">
+    <div class="ch">
+      <div class="ci2" style="background:#FCEBEB">❤️</div>
+      <div><div class="ctitle">Riesgo: Salud</div><div class="csub">Enfermedades graves y gastos médicos</div></div>
+    </div>
+    <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:7px;padding:9px 11px;margin-bottom:10px;font-size:12px;color:#856404;font-weight:500">
+      ⚠️ Financieramente, este puede ser el golpe más duro para tu familia. Un diagnóstico grave puede consumir años de ahorro en meses.
+    </div>
+    <label class="ql first">¿Estás listo para afrontar una enfermedad grave (cáncer, trasplante, crónica-degenerativa) si pasara hoy?</label>
+    <textarea id="q3a" rows="2" placeholder="¿Tienes seguro de gastos médicos mayores? ¿Cuánto cubre? ¿Tiene deducible?"></textarea>
+    <label class="ql">¿Cuánto podrías absorber económicamente de un gasto médico mayor hoy?</label>
+    <textarea id="q3b" rows="2" placeholder="Reserva de emergencia, seguros actuales, capacidad de endeudamiento..."></textarea>
+    <div class="fbox">
+      <div class="fb-title">📐 Reserva recomendada para emergencias médicas</div>
+      <div class="irow">
+        <div class="fcol"><span class="fcol-lbl">Gasto médico/mes $</span><input type="text" class="finp" id="f3a" style="width:110px" placeholder="ej. 8,000" oninput="calcF(3)"></div>
+        <span class="fop">×</span>
+        <div class="fcol"><span class="fcol-lbl">Meses</span><input type="text" class="finp" id="f3b" style="width:60px" value="12" oninput="calcF(3)"></div>
+        <span class="fop">×</span>
+        <div class="fcol"><span class="fcol-lbl">Años trat.</span><input type="text" class="finp" id="f3c" style="width:60px" value="3" oninput="calcF(3)"></div>
+        <span class="fop">=</span>
+        <div class="fcol"><span class="fcol-lbl">Reserva total</span><div class="fres" id="f3r">—</div></div>
+      </div>
+      <div class="fb-hint">Ajusta el gasto mensual estimado y los años de tratamiento según el tipo de enfermedad.</div>
+    </div>
+  </div>
+  <label class="ql" style="padding:0 4px">¿Cómo dirías que estás en este momento?</label>
+  <div class="erow">
+    <button class="ebtn" onclick="setE(3,'bien',this)">😊 Bien</button>
+    <button class="ebtn" onclick="setE(3,'medio',this)">😐 Más o menos</button>
+    <button class="ebtn" onclick="setE(3,'mal',this)">😞 Mal</button>
+  </div>
+  <div class="navbtns"><button class="nbtn" onclick="goTo(2)">← Atrás</button><button class="nbtn primary" onclick="goTo(4)">Siguiente →</button></div>
+</div>
+
+<!-- ======== PANEL 4: METAS ======== -->
+<div class="panel" id="p4">
+  <div class="card">
+    <div class="ch">
+      <div class="ci2" style="background:#FAEEDA">🎯</div>
+      <div><div class="ctitle">Metas financieras</div><div class="csub">Tu proyecto de vida</div></div>
+    </div>
+    <label class="ql first">¿Cuál es ese proyecto que te emociona?</label>
+    <textarea id="q4a" rows="2" placeholder="Casa propia, viaje soñado, negocio propio, educación de hijos, libertad financiera..."></textarea>
+    <label class="ql">¿Cuánto necesitas para hacerlo realidad?</label>
+    <textarea id="q4b" rows="2" placeholder="Monto estimado para alcanzar tu meta..."></textarea>
+    <label class="ql">¿Qué tienes avanzado hacia esa meta hoy?</label>
+    <textarea id="q4c" rows="2" placeholder="Ahorro actual, inversiones, activos destinados a esta meta..."></textarea>
+    <div class="fbox">
+      <div class="fb-title">📐 Proyección de ahorro hacia tu meta</div>
+      <div class="irow">
+        <div class="fcol"><span class="fcol-lbl">Ahorro/mes $</span><input type="text" class="finp" id="f4a" style="width:110px" placeholder="ej. 3,000" oninput="calcF(4)"></div>
+        <span class="fop">×</span>
+        <div class="fcol"><span class="fcol-lbl">Meses</span><input type="text" class="finp" id="f4b" style="width:60px" value="12" oninput="calcF(4)"></div>
+        <span class="fop">×</span>
+        <div class="fcol"><span class="fcol-lbl">Años</span><input type="text" class="finp" id="f4c" style="width:60px" value="5" oninput="calcF(4)"></div>
+        <span class="fop">=</span>
+        <div class="fcol"><span class="fcol-lbl">Meta acumulada</span><div class="fres" id="f4r">—</div></div>
+      </div>
+      <div class="fb-hint">Cambia los años para ver cuánto acumulas según tu horizonte de tiempo.</div>
+    </div>
+  </div>
+  <label class="ql" style="padding:0 4px">¿Cómo dirías que estás en este momento?</label>
+  <div class="erow">
+    <button class="ebtn" onclick="setE(4,'bien',this)">😊 Bien</button>
+    <button class="ebtn" onclick="setE(4,'medio',this)">😐 Más o menos</button>
+    <button class="ebtn" onclick="setE(4,'mal',this)">😞 Mal</button>
+  </div>
+  <div class="navbtns"><button class="nbtn" onclick="goTo(3)">← Atrás</button><button class="nbtn primary" onclick="goTo(5)">Siguiente →</button></div>
+</div>
+
+<!-- ======== PANEL 5: VEJEZ ======== -->
+<div class="panel" id="p5">
+  <div class="card">
+    <div class="ch">
+      <div class="ci2" style="background:#EEEDFE">👴</div>
+      <div><div class="ctitle">Vejez y retiro</div><div class="csub">Independencia financiera a largo plazo</div></div>
+    </div>
+    <label class="ql first">¿A qué edad te gustaría tener la opción de retirarte, si así lo decides?</label>
+    <textarea id="q5a" rows="2" placeholder="Edad de retiro deseada y razones (familia, salud, metas personales)..."></textarea>
+    <label class="ql">¿Qué tan preparado te ves para tu retiro actualmente?</label>
+    <textarea id="q5b" rows="2" placeholder="AFORE, ahorro voluntario, inversiones, bienes raíces, negocio propio..."></textarea>
+    <div class="fbox">
+      <div class="fb-title">📐 Fondo de retiro necesario ($ × 12 × años en retiro)</div>
+      <div class="irow">
+        <div class="fcol"><span class="fcol-lbl">Ingreso/mes $</span><input type="text" class="finp" id="f5a" style="width:110px" placeholder="ej. 25,000" oninput="calcF(5)"></div>
+        <span class="fop">×</span>
+        <div class="fcol"><span class="fcol-lbl">Meses</span><input type="text" class="finp" id="f5b" style="width:60px" value="12" oninput="calcF(5)"></div>
+        <span class="fop">×</span>
+        <div class="fcol"><span class="fcol-lbl">Años retiro</span><input type="text" class="finp" id="f5c" style="width:60px" value="20" oninput="calcF(5)"></div>
+        <span class="fop">=</span>
+        <div class="fcol"><span class="fcol-lbl">Fondo necesario</span><div class="fres" id="f5r">—</div></div>
+      </div>
+      <div class="fb-hint">Considera que si te retiras a los 65 y vives hasta los 85, necesitas 20 años de ingresos.</div>
+    </div>
+  </div>
+  <label class="ql" style="padding:0 4px">¿Cómo dirías que estás en este momento?</label>
+  <div class="erow">
+    <button class="ebtn" onclick="setE(5,'bien',this)">😊 Bien</button>
+    <button class="ebtn" onclick="setE(5,'medio',this)">😐 Más o menos</button>
+    <button class="ebtn" onclick="setE(5,'mal',this)">😞 Mal</button>
+  </div>
+  <div class="navbtns"><button class="nbtn" onclick="goTo(4)">← Atrás</button><button class="nbtn primary" onclick="goTo(6)">Ver mi plan →</button></div>
+</div>
+
+<!-- ======== PANEL 6: SOLUCIÓN ======== -->
+<div class="panel" id="p6">
+
+  <!-- Resumen estados -->
+  <div class="card">
+    <div class="ch">
+      <div class="ci2" style="background:#EAF3DE">📋</div>
+      <div><div class="ctitle">Plan de solución personalizado</div><div class="csub">Basado en tu diagnóstico completo</div></div>
+    </div>
+    <div id="badges-row" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px"></div>
+    <div class="rgrid" id="rgrid"></div>
+    <div style="overflow-x:auto;margin-top:6px">
+      <table class="stbl">
+        <thead>
+          <tr>
+            <th style="width:20%">¿Qué quieres?</th>
+            <th style="width:25%">Solución recomendada</th>
+            <th style="width:23%">Beneficios clave</th>
+            <th style="width:17%">Estimación $<br><span style="font-weight:400;font-size:9px">(de tus fórmulas)</span></th>
+            <th style="width:15%">Decisión</th>
+          </tr>
+        </thead>
+        <tbody id="stbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- AI RECOMMENDATIONS -->
+  <div class="ai-card">
+    <div class="ai-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div class="ai-title">✨ Análisis y recomendaciones personalizadas</div>
+      <button class="nbtn primary" id="gen-btn" onclick="generateAI()" style="flex:none;width:auto;padding:7px 16px;font-size:12px">
+        🤖 Generar análisis completo
+      </button>
+    </div>
+    <div id="ai-output">
+      <div class="ai-placeholder">Completa las pestañas del diagnóstico y presiona "Generar análisis completo" para obtener recomendaciones personalizadas basadas en tu situación actual vs. con planeación estratégica.</div>
+    </div>
+  </div>
+
+  <div class="navbtns">
+    <button class="nbtn" onclick="goTo(5)">← Atrás</button>
+    <button class="nbtn primary" onclick="printReport()" style="background:#1a5e1a">🖨️ Imprimir análisis completo</button>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<script>
+// ===== STATE =====
+const E = {}; // estados por panel
+const FR = [0,0,0,0,0,0]; // formula results
+let promedio = 0;
+let cur = 0;
+
+// ===== NAVIGATION =====
+function goTo(i) {
+  document.querySelectorAll('.panel').forEach((p,j) => p.classList.toggle('active', j===i));
+  document.querySelectorAll('.tab').forEach((t,j) => t.classList.toggle('active', j===i));
+  cur = i;
+  renderSteps();
+  if (i===6) renderSol();
+}
+
+function renderSteps() {
+  document.getElementById('steps').innerHTML =
+    Array.from({length:7},(_,i) =>
+      `<div class="sdot ${i===cur?'active':i<cur?'done':''}"></div>`).join('');
+}
+renderSteps();
+
+// ===== ESTADO =====
+function setE(p, v, btn) {
+  E[p] = v;
+  btn.closest('.erow').querySelectorAll('.ebtn').forEach(b => {
+    b.classList.remove('bien','medio','mal');
+  });
+  btn.classList.add(v);
+}
+
+// ===== TIMELINE =====
+function updateTL() {
+  const ini = +document.getElementById('t-ini').value||18;
+  const act = +document.getElementById('t-act').value||35;
+  const ret = +document.getElementById('t-ret').value||65;
+  const trab = Math.max(act-ini,0);
+  const paret = Math.max(ret-act,0);
+  document.getElementById('t-trabajados').textContent = trab;
+  document.getElementById('t-paretiro').textContent = paret;
+  document.getElementById('p0-sub').textContent = `Llevas ${trab} año${trab!==1?'s':''} trabajando`;
+
+  const MIN=15, MAX=85, R=MAX-MIN;
+  const pct = v => Math.min(Math.max((v-MIN)/R*100,0),100).toFixed(2);
+
+  const pIni=pct(ini), pAct=pct(act), pRet=pct(ret);
+
+  document.getElementById('tlv-w').style.cssText=`left:${pIni}%;width:${Math.max(pAct-pIni,0)}%`;
+  document.getElementById('tlv-f').style.cssText=`left:${pAct}%;width:${Math.max(pRet-pAct,0)}%`;
+  document.getElementById('tl-hoy-icon').style.left=pAct+'%';
+  document.getElementById('tl-hoy-lbl').style.left=pAct+'%';
+  document.getElementById('tl-hoy-lbl').textContent=`Hoy (${act})`;
+  document.getElementById('tl-ret-icon').style.left=pRet+'%';
+  document.getElementById('tl-ret-lbl').style.left=pRet+'%';
+  document.getElementById('tl-ret-lbl').textContent=`Retiro (${ret})`;
+  document.getElementById('tl-lblini').textContent=`Inicio (${ini})`;
+
+  // auto-fill f0c with years worked
+  const f0c = document.getElementById('f0c');
+  if (!f0c._manual) { f0c.value = trab; calcF(0); }
+  document.getElementById('f0-hint').textContent =
+    `Años auto-calculados (${trab} años trabajados). Todos los campos son editables.`;
+}
+document.getElementById('f0c').addEventListener('input',()=>{document.getElementById('f0c')._manual=true;});
+updateTL();
+
+// ===== INCOME PROMEDIO =====
+function N(s){ return parseFloat((s||'').replace(/[$,\s]/g,''))||0; }
+function MXN(n){ return n>0?'$'+Math.round(n).toLocaleString('es-MX'):'—'; }
+
+function calcPromedio(){
+  const a=N(document.getElementById('ing-ini').value);
+  const b=N(document.getElementById('ing-act').value);
+  promedio = (a+b)/2;
+  document.getElementById('ing-prom').textContent = MXN(promedio);
+  // suggest promedio into f0a if empty
+  const f0a=document.getElementById('f0a');
+  if(!f0a._manual && promedio>0){ f0a.value=Math.round(promedio).toLocaleString('es-MX'); calcF(0); }
+}
+document.getElementById('f0a').addEventListener('input',()=>{document.getElementById('f0a')._manual=true;});
+
+// ===== FORMULA CALC =====
+function calcF(i) {
+  const ids = [['f0a','f0b','f0c','f0r'],['f1a','f1b','f1c','f1r'],['f2a','f2b','f2c','f2r'],
+               ['f3a','f3b','f3c','f3r'],['f4a','f4b','f4c','f4r'],['f5a','f5b','f5c','f5r']];
+  const [a,b,c,r] = ids[i];
+  const v = N(document.getElementById(a).value)*N(document.getElementById(b).value)*N(document.getElementById(c).value);
+  FR[i] = v;
+  document.getElementById(r).textContent = MXN(v);
+}
+
+// ===== SOLUTION RENDER =====
+const SOL_DATA = [
+  {emoji:'💰',area:'Ahorro / Inversiones', q:'Generar y hacer crecer mi patrimonio', sol:'Plan de ahorro + inversión diversificada (CETES, fondos, PPR, renta variable)',ben:'Interés compuesto, deducción fiscal ISR, creación de patrimonio a largo plazo'},
+  {emoji:'⚫',area:'Fallecimiento', q:'Proteger a mi familia si yo falto', sol:'Seguro de vida temporal o permanente con suma asegurada adecuada',ben:'Reemplazo de ingresos, liquidación de deudas, tranquilidad familiar garantizada'},
+  {emoji:'♿',area:'Invalidez', q:'Mantener mis ingresos si quedo inválido', sol:'Seguro de invalidez total y permanente + complemento IMSS',ben:'Renta mensual garantizada, cobertura del hogar y familia, no descapitalizarse'},
+  {emoji:'❤️',area:'Salud', q:'Cubrir enfermedades graves sin arruinarme', sol:'Seguro de Gastos Médicos Mayores (GMM) con cobertura amplia',ben:'Hospitales de primer nivel, sin deducible oneroso, protección patrimonial'},
+  {emoji:'🎯',area:'Metas', q:'Alcanzar mis proyectos de vida', sol:'Plan de ahorro a plazo específico + inversión en activos reales',ben:'Meta alcanzable con disciplina, rendimientos superiores a inflación'},
+  {emoji:'👴',area:'Vejez / Retiro', q:'Retirarme con independencia financiera', sol:'PPR, AFORE voluntaria, inversiones diversificadas, renta vitalicia',ben:'Ingresos garantizados en el retiro, deducción de ISR, tranquilidad total'},
+];
+
+function renderSol(){
+  const colors = {bien:'#27500A',medio:'#633806',mal:'#791F1F',undefined:'#666'};
+  const bgs = {bien:'#EAF3DE',medio:'#FAEEDA',mal:'#FCEBEB',undefined:'#f0f0f0'};
+  const em = {bien:'😊',medio:'😐',mal:'😞',undefined:'⬜'};
+
+  // badges
+  document.getElementById('badges-row').innerHTML = SOL_DATA.map((_,i)=>{
+    const e=E[i]; const area=SOL_DATA[i].area;
+    return `<span style="background:${bgs[e]};color:${colors[e]};font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500">${em[e]} ${area}</span>`;
+  }).join('');
+
+  // resumen grid
+  const cnt={bien:0,medio:0,mal:0};
+  for(let i=0;i<6;i++) { const e=E[i]; if(cnt[e]!==undefined) cnt[e]++; }
+  document.getElementById('rgrid').innerHTML = [
+    ['bien','😊 Bien','#27500A'],['medio','😐 Más o menos','#633806'],['mal','😞 Mal','#791F1F']
+  ].map(([k,l,c])=>`<div class="rcard ${k}"><div class="rnum" style="color:${c}">${cnt[k]||0}</div><div class="rlbl" style="color:${c}">${l}</div></div>`).join('');
+
+  // table
+  document.getElementById('stbody').innerHTML = SOL_DATA.map((s,i)=>`
+    <tr>
+      <td><textarea style="min-height:48px;font-size:11px;padding:4px;margin:0" id="sq${i}">${s.emoji} ${s.q}</textarea></td>
+      <td><textarea style="min-height:48px;font-size:11px;padding:4px;margin:0" id="ss${i}">${s.sol}</textarea></td>
+      <td><textarea style="min-height:48px;font-size:11px;padding:4px;margin:0" id="sb${i}">${s.ben}</textarea></td>
+      <td style="vertical-align:middle"><input type="text" class="fi est" id="se${i}" value="${FR[i]>0?'$'+Math.round(FR[i]).toLocaleString('es-MX'):''}" placeholder="—" style="font-size:11px;padding:4px 6px;background:#f0fdf0;border-color:#c8e6c9;font-weight:700;color:#1a5e1a;margin:0;border-radius:5px"></td>
+      <td style="vertical-align:middle"><select class="dsel" id="sd${i}"><option>—</option><option>✅ Sí</option><option>🤔 Pensarlo</option><option>❌ No ahora</option></select></td>
+    </tr>`).join('');
+}
+
+// ===== AI RECOMMENDATIONS =====
+function gv(id){ const el=document.getElementById(id); return el?(el.value||el.textContent||'').trim():''; }
+
+async function generateAI(){
+  const btn=document.getElementById('gen-btn');
+  const out=document.getElementById('ai-output');
+  btn.disabled=true; btn.textContent='⏳ Analizando...';
+  out.innerHTML=`<div class="ai-loading"><div class="spinner"></div><span>Generando análisis personalizado...</span></div>`;
+
+  const nombre=gv('c-nombre')||'el cliente';
+  const tel=gv('c-tel'); const email=gv('c-email');
+  const ini=gv('t-ini'),act=gv('t-act'),ret=gv('t-ret');
+  const trab=Math.max((+act)-(+ini),0), paret=Math.max((+ret)-(+act),0);
+  const ingI=gv('ing-ini'),ingA=gv('ing-act');
+  const prom=MXN(promedio);
+  const areaNames=['Ahorro/Inversiones','Fallecimiento','Invalidez','Salud','Metas','Vejez/Retiro'];
+  const qs=[[gv('q0a'),gv('q0b')],[gv('q1a'),gv('q1b')],[gv('q2a'),gv('q2b'),gv('q2c')],
+            [gv('q3a'),gv('q3b')],[gv('q4a'),gv('q4b'),gv('q4c')],[gv('q5a'),gv('q5b')]];
+  const estados_txt={bien:'BIEN ✅',medio:'MÁS O MENOS ⚠️',mal:'MAL ❌',undefined:'NO EVALUADO'};
+
+  const diagnostico = areaNames.map((a,i)=>`
+• ${a} → Estado: ${estados_txt[E[i]]}
+  Respuestas: ${qs[i].filter(Boolean).join(' | ')||'Sin responder'}
+  Estimación calculada: ${FR[i]>0?MXN(FR[i]):'Sin calcular'}`).join('\n');
+
+  const prompt=`Eres un asesor financiero experto en México con 20 años de experiencia. Analiza el siguiente diagnóstico de "Línea de la Vida" y genera un análisis financiero profesional en español.
+
+═══════════════════════════════
+DATOS DEL CLIENTE
+═══════════════════════════════
+Nombre: ${nombre}
+Edad actual: ${act} años | Empezó a trabajar: ${ini} años | Años de trayectoria: ${trab}
+Retiro deseado: ${ret} años | Años para el retiro: ${paret}
+Ingreso inicial: $${ingI}/mes | Ingreso actual: $${ingA}/mes | Promedio: ${prom}/mes
+
+═══════════════════════════════
+DIAGNÓSTICO COMPLETO
+═══════════════════════════════
+${diagnostico}
+
+═══════════════════════════════
+INSTRUCCIONES
+═══════════════════════════════
+Genera un análisis dividido en estas 4 secciones con emojis y formato claro:
+
+1. 📊 RADIOGRAFÍA ACTUAL — Cómo está ${nombre} HOY en cada área (sé honesto y directo sobre los riesgos reales con datos y montos específicos en pesos mexicanos)
+
+2. 🚀 CON PLANEACIÓN ESTRATÉGICA — Cómo estaría ${nombre} en 5, 10 y 20 años SI implementa un plan financiero completo (usa proyecciones optimistas pero realistas, muestra el contraste poderoso)
+
+3. 🎯 PLAN DE ACCIÓN PRIORITARIO — Las 3 acciones MÁS URGENTES que debe tomar HOY, ordenadas por prioridad, con montos específicos sugeridos en MXN
+
+4. 💡 PRODUCTOS RECOMENDADOS — Lista específica de productos financieros y seguros para su perfil (nombra categorías concretas: GMM, seguro de vida, PPR, CETES, etc. con montos orientativos)
+
+Sé empático pero directo. Usa un tono profesional y motivador. Incluye cifras concretas en pesos mexicanos. El análisis debe ser lo suficientemente detallado para que ${nombre} entienda exactamente qué riesgo corre y qué puede lograr con una buena planeación.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+        messages:[{role:'user',content:prompt}]})
+    });
+    const data=await res.json();
+    const txt=(data.content||[]).map(b=>b.text||'').join('\n');
+    out.innerHTML=`<div class="ai-body">${txt.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>`;
+  }catch(err){
+    out.innerHTML=`<div class="ai-placeholder" style="color:#A32D2D">⚠️ Error al conectar con el servicio de análisis. Verifica tu conexión e intenta nuevamente.<br><small>${err.message}</small></div>`;
+  }
+  btn.disabled=false; btn.textContent='🔄 Regenerar análisis';
+}
+
+// ===== PRINT REPORT =====
+function printReport(){
+  const nombre=gv('c-nombre')||'Cliente';
+  const tel=gv('c-tel'); const email=gv('c-email');
+  const ini=gv('t-ini'),act=gv('t-act'),ret=gv('t-ret');
+  const trab=Math.max((+act)-(+ini),0), paret=Math.max((+ret)-(+act),0);
+  const ingI=gv('ing-ini'),ingA=gv('ing-act');
+  const estColors={bien:'#27500A',medio:'#633806',mal:'#791F1F',undefined:'#666'};
+  const estBg={bien:'#EAF3DE',medio:'#FAEEDA',mal:'#FCEBEB',undefined:'#f0f0f0'};
+  const estTxt={bien:'😊 BIEN',medio:'😐 MÁS O MENOS',mal:'😞 MAL',undefined:'⬜ No evaluado'};
+  const areaNames=['💰 Ahorro/Inversiones','⚫ Fallecimiento','♿ Invalidez','❤️ Salud','🎯 Metas','👴 Vejez/Retiro'];
+  const qs=[[gv('q0a'),gv('q0b')],[gv('q1a'),gv('q1b')],[gv('q2a'),gv('q2b'),gv('q2c')],
+            [gv('q3a'),gv('q3b')],[gv('q4a'),gv('q4b'),gv('q4c')],[gv('q5a'),gv('q5b')]];
+  const aiContent = document.getElementById('ai-output').innerHTML;
+
+  const html=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>Línea de la Vida – ${nombre}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,sans-serif}
+body{padding:20px 24px;color:#1a1a1a;font-size:13px}
+h1{font-size:22px;color:#2a7a2a;font-weight:700;margin-bottom:2px}
+.sub{font-size:12px;color:#666;margin-bottom:14px}
+.hdr-box{background:#2a7a2a;color:#fff;padding:14px 18px;border-radius:8px;margin-bottom:14px}
+.hdr-box h1{color:#fff;font-size:20px}
+.hdr-box .sub{color:rgba(255,255,255,0.8);margin-bottom:8px}
+.client-row{display:flex;gap:20px;font-size:12px;color:rgba(255,255,255,0.9)}
+.tl-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.tlb-p{background:#f0f0f0;border-radius:6px;padding:8px;text-align:center}
+.tlb-p label{display:block;font-size:9px;color:#666;margin-bottom:3px}
+.tlb-p .val{font-size:16px;font-weight:700;color:#2a7a2a}
+.section{margin-bottom:16px}
+.section h2{font-size:13px;font-weight:700;color:#2a7a2a;border-bottom:2px solid #2a7a2a;padding-bottom:4px;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em}
+.area-card{border:1px solid #e0e0e0;border-radius:7px;padding:10px 12px;margin-bottom:8px;break-inside:avoid}
+.area-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.area-name{font-size:13px;font-weight:600}
+.badge{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600}
+.area-qs{font-size:12px;color:#444;line-height:1.6}
+.area-est{font-size:12px;font-weight:700;color:#1a5e1a;margin-top:5px}
+.sol-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:6px}
+.sol-table th{background:#2a7a2a;color:#fff;padding:7px;text-align:left;font-size:10.5px}
+.sol-table td{border-bottom:1px solid #e0e0e0;padding:6px 5px;vertical-align:top}
+.ai-section{background:#f8fdf8;border:1px solid #c8e6c9;border-radius:8px;padding:12px 14px}
+.ai-section h2{color:#2a7a2a;border-color:#c8e6c9}
+.footer{margin-top:20px;text-align:center;font-size:10px;color:#999;border-top:1px solid #e0e0e0;padding-top:10px}
+@media print{body{padding:10px};.area-card{break-inside:avoid}}
+</style></head><body>
+<div class="hdr-box">
+  <h1>La Línea de la Vida — Diagnóstico Financiero</h1>
+  <div class="sub">Etapa más productiva · Fecha: ${new Date().toLocaleDateString('es-MX',{year:'numeric',month:'long',day:'numeric'})}</div>
+  <div class="client-row">
+    <span><strong>Cliente:</strong> ${nombre}</span>
+    ${tel?`<span><strong>Tel:</strong> ${tel}</span>`:''}
+    ${email?`<span><strong>Email:</strong> ${email}</span>`:''}
+  </div>
+</div>
+
+<div class="tl-summary">
+  <div class="tlb-p"><label>Inicio trabajo</label><div class="val">${ini} años</div></div>
+  <div class="tlb-p"><label>Edad actual</label><div class="val">${act} años</div></div>
+  <div class="tlb-p"><label>Retiro deseado</label><div class="val">${ret} años</div></div>
+  <div class="tlb-p"><label>Años trabajados</label><div class="val">${trab} años</div></div>
+  <div class="tlb-p"><label>Para el retiro</label><div class="val">${paret} años</div></div>
+</div>
+${ingI||ingA?`<div style="background:#EAF3DE;border-radius:6px;padding:8px 12px;margin-bottom:14px;font-size:12px">
+  💰 <strong>Ingresos:</strong> Inicial: $${ingI}/mes | Actual: $${ingA}/mes | Promedio: ${MXN(promedio)}/mes
+</div>`:''}
+
+<div class="section">
+  <h2>Diagnóstico por área</h2>
+  ${areaNames.map((a,i)=>{
+    const e=E[i];
+    const preguntas=qs[i].filter(Boolean);
+    return `<div class="area-card">
+      <div class="area-hdr">
+        <span class="area-name">${a}</span>
+        <span class="badge" style="background:${estBg[e]};color:${estColors[e]}">${estTxt[e]}</span>
+      </div>
+      ${preguntas.length?`<div class="area-qs">${preguntas.map(q=>`• ${q}`).join('<br>')}</div>`:'<div class="area-qs" style="color:#aaa">Sin responder</div>'}
+      ${FR[i]>0?`<div class="area-est">📐 Estimación calculada: ${MXN(FR[i])}</div>`:''}
+    </div>`;
+  }).join('')}
+</div>
+
+<div class="section">
+  <h2>Plan de solución</h2>
+  <table class="sol-table">
+    <thead><tr><th>¿Qué quieres?</th><th>Solución recomendada</th><th>Beneficios</th><th>Estimación $</th><th>Decisión</th></tr></thead>
+    <tbody>
+    ${SOL_DATA.map((s,i)=>{
+      const q2=document.getElementById('sq'+i);
+      const ss=document.getElementById('ss'+i);
+      const sb=document.getElementById('sb'+i);
+      const se=document.getElementById('se'+i);
+      const sd=document.getElementById('sd'+i);
+      return `<tr>
+        <td>${q2?q2.value:s.emoji+' '+s.q}</td>
+        <td>${ss?ss.value:s.sol}</td>
+        <td>${sb?sb.value:s.ben}</td>
+        <td style="font-weight:700;color:#1a5e1a">${se?se.value:FR[i]>0?MXN(FR[i]):''}</td>
+        <td>${sd?sd.value:'—'}</td>
+      </tr>`;
+    }).join('')}
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <div class="ai-section">
+    <h2>✨ Análisis y recomendaciones personalizadas</h2>
+    <div style="font-size:12.5px;line-height:1.75;margin-top:8px">${aiContent}</div>
+  </div>
+</div>
+
+<div class="footer">
+  Diagnóstico generado con la herramienta "Línea de la Vida Financiera" · ${new Date().toLocaleDateString('es-MX')}
+</div>
+</body></html>`;
+
+  const w=window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+  setTimeout(()=>w.print(),800);
+}
+
+// ===== FULLSCREEN =====
+function toggleFS(){
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen().catch(()=>{});
+  } else {
+    document.exitFullscreen();
+  }
+}
+document.addEventListener('fullscreenchange',()=>{
+  const btn=document.querySelector('.tbtn');
+  if(btn) btn.textContent = document.fullscreenElement?'✕ Salir de pantalla completa':'⛶ Pantalla completa';
+});
+</script>
+</body>
+</html>
